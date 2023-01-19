@@ -11,6 +11,7 @@ enum Errors: string
     case NotYourTurn = "Not your turn!";
     case MoveTaken = "Move already taken!";
     case AlreadyWon = "This game has already a winner!";
+    case BoardComplete = "This game is complete. No other moves available";
 }
 
 class TicTacToe
@@ -49,6 +50,11 @@ class TicTacToe
     {
         if ($this->thereIsWinner()) {
             $this->error = Errors::AlreadyWon;
+            return false;
+        }
+
+        if ($this->isBoardComplete()) {
+            $this->error = Errors::BoardComplete;
             return false;
         }
 
@@ -92,7 +98,7 @@ class TicTacToe
     }
 
     public function thereIsWinner()
-    {       
+    {
         return ($this->isWinnerByRow() || $this->isWinnerByCol() || $this->isWinnerByOblique());
     }
 
@@ -130,7 +136,7 @@ class TicTacToe
         for ($i = 0; $i < 3; $i++) {
             $sum += $this->board[$i][$i];
         }
-       
+
         if (abs($sum) == 3) {
             $this->winnerSum = $sum;
             return true;
@@ -150,5 +156,15 @@ class TicTacToe
         if ($this->winnerSum == 3) return 1;
         if ($this->winnerSum == -3) return 2;
         throw new Exception("There is no winner yet!");
+    }
+
+    private function isBoardComplete()
+    {
+        for ($row = 0; $row < 3; $row++) {
+            for ($col = 0; $col < 3; $col++) {
+                if ($this->board[$row][$col] == 0) return false;
+            }
+        }
+        return true;
     }
 }
