@@ -21,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/game/create', [GameController::class, 'create'])->name('game-create');
+Route::post('/game/move', [GameController::class, 'move'])->name('game-move');

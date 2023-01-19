@@ -18,4 +18,9 @@ class Game extends Model
     {
         $this->token = Str::uuid();
     }
+
+    public function moves()
+    {
+        return $this->hasMany(Move::class, 'game_id', 'id');
+    }
 }
