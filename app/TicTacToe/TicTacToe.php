@@ -4,11 +4,13 @@ namespace App\TicTacToe;
 
 use App\Models\Game;
 use App\Models\Move;
+use Exception;
 
 enum Errors: string
 {
     case NotYourTurn = "Not your turn!";
     case MoveTaken = "Move already taken!";
+    case AlreadyWon = "This game has already a winner!";
 }
 
 class TicTacToe
@@ -18,6 +20,8 @@ class TicTacToe
     public $board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
     private $lastPlayer = 0;
     public $error;
+    public $winner = 0;
+    private $winnerSum = 0;
 
     public function __construct(Game $game, Move $move, $board = null, $lastPlayer = 0)
     {
@@ -43,6 +47,11 @@ class TicTacToe
 
     public function move($player, $row, $col)
     {
+        if ($this->thereIsWinner()) {
+            $this->error = Errors::AlreadyWon;
+            return false;
+        }
+
         if (!$this->isPlayerTurn($player)) {
             $this->error = Errors::NotYourTurn;
             return false;
@@ -58,6 +67,10 @@ class TicTacToe
         $this->move->row = $row;
         $this->move->col = $col;
         $this->move->save();
+        $this->board[$row][$col] = $this->getPlayerSymbol($player);
+        if ($this->thereIsWinner()) {
+            $this->winner = $this->getWinner();
+        }
         return true;
     }
 
@@ -73,8 +86,69 @@ class TicTacToe
         return true;
     }
 
-    private function getPlayerSymbol($player)
+    public function getPlayerSymbol($player)
     {
         return $player == 1 ? 1 : -1;
+    }
+
+    public function thereIsWinner()
+    {       
+        return ($this->isWinnerByRow() || $this->isWinnerByCol() || $this->isWinnerByOblique());
+    }
+
+    private function isWinnerByRow()
+    {
+        foreach ($this->board as $row) {
+            $sum = array_sum($row);
+            if (abs($sum) == 3) {
+                $this->winnerSum = $sum;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function isWinnerByCol()
+    {
+        for ($col = 0; $col < 3; $col++) {
+            $sum = 0;
+            for ($row = 0; $row < 3; $row++) {
+                $sum += $this->board[$row][$col];
+            }
+            if (abs($sum) == 3) {
+                $this->winnerSum = $sum;
+                return true;
+            }
+            $sum = 0;
+        }
+        return false;
+    }
+
+    private function isWinnerByOblique()
+    {
+        $sum = 0;
+        for ($i = 0; $i < 3; $i++) {
+            $sum += $this->board[$i][$i];
+        }
+       
+        if (abs($sum) == 3) {
+            $this->winnerSum = $sum;
+            return true;
+        }
+
+        $sum = $this->board[2][0] + $this->board[1][1] + $this->board[0][2];
+        if (abs($sum) == 3) {
+            $this->winnerSum = $sum;
+            return true;
+        }
+
+        return false;
+    }
+
+    private function getWinner()
+    {
+        if ($this->winnerSum == 3) return 1;
+        if ($this->winnerSum == -3) return 2;
+        throw new Exception("There is no winner yet!");
     }
 }

@@ -73,4 +73,90 @@ class TicTacToeTest extends TestCase
         $this->assertEquals($sut->error, Errors::MoveTaken);
     }
 
+    /**
+     * @dataProvider provideBoardWithWinnerByRow
+     */
+    public function test_user_win_when_makes_horizontal_line($board)
+    {
+        $sut = new TicTacToe($this->gameMock, $this->moveMock, $board, lastPlayer: 2);
+        $ret = $sut->thereIsWinner();
+        $this->assertTrue($ret);
+    }
+
+    public function provideBoardWithWinnerByRow()
+    {
+        return [
+            [
+                [[1, 1, 1], [0, 0, 0], [0, 0, 0]], 1
+            ],
+            [
+                [[0, 0, 0], [-1, -1, -1], [0, 0, 0]], 2
+            ],
+            [
+                [[0, 0, 0], [0, 0, 0], [1, 1, 1]], 1
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideBoardWithWinnerByCol
+     */
+    public function test_user_win_when_makes_vertical_line($board)
+    {
+        $sut = new TicTacToe($this->gameMock, $this->moveMock, $board, lastPlayer: 2);
+        $ret = $sut->thereIsWinner();
+        $this->assertTrue($ret);
+    }
+
+    public function provideBoardWithWinnerByCol()
+    {
+        return [
+            [
+                [[1, 0, 0], [1, 0, 0], [1, 0, 0]]
+            ],
+            [
+                [[0, 1, 0], [0, 1, 0], [0, 1, 0]]
+            ],
+            [
+                [[0, 0, 1], [0, 0, 1], [0, 0, 1]]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideBoardWithWinnerOblique
+     */
+    public function test_user_win_when_makes_oblique_line($board)
+    {
+        $sut = new TicTacToe($this->gameMock, $this->moveMock, $board, lastPlayer: 2);
+        $ret = $sut->thereIsWinner();
+        $this->assertTrue($ret);
+    }
+
+    public function provideBoardWithWinnerOblique()
+    {
+        return [
+            [
+                [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+            ],
+            [
+                [[0, 0, 1], [0, 1, 0], [1, 0, 0]]
+            ]
+        ];
+    }
+
+    public function test_user_cant_make_a_move_on_alredy_won_game()
+    {
+        $fakeGame = new Game(['id' => 1]);
+        $this->gameMock->shouldReceive('find')->with(1)->once()->andReturn($fakeGame);
+        $this->moveMock->shouldReceive('setAttribute')->andReturnSelf();
+        $this->moveMock->shouldReceive('save');
+
+        $board = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+        $sut = new TicTacToe($this->gameMock, $this->moveMock, $board, lastPlayer: 2);
+        $sut->init(gameId: 1);
+        $ret = $sut->move(player: 1, row: 0, col: 1);
+        $this->assertFalse($ret);
+        $this->assertEquals(Errors::AlreadyWon, $sut->error);
+    }
 }

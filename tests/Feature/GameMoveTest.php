@@ -61,6 +61,7 @@ class GameMoveTest extends TestCase
         $response->assertJson(
             fn (AssertableJson $json) =>
             $json->has('error')
+                ->etc()
         );
     }
 
@@ -74,6 +75,24 @@ class GameMoveTest extends TestCase
         $response->assertJson(
             fn (AssertableJson $json) =>
             $json->has('error')
+                ->etc()
+        );
+    }
+
+    public function test_when_there_is_a_winner_returns_the_winner_player()
+    {
+        $game = Game::factory()->create();
+        Move::factory()->create(['game_id' => $game->id, 'player' => 2, 'row' => 0, 'col' => 0]);
+        Move::factory()->create(['game_id' => $game->id, 'player' => 2, 'row' => 1, 'col' => 1]);
+        Move::factory()->create(['game_id' => $game->id, 'player' => 1, 'row' => 0, 'col' => 1]);
+
+        $response = $this->post(route('game-move'), ['token' => $game->token, 'player' => 2, 'row' => 2, 'col' => 2]);
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->where('winner', 2)
+                ->etc()
         );
     }
 }

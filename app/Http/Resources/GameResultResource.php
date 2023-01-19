@@ -12,10 +12,12 @@ class GameResultResource
 
     public $board;
     public $error;
+    public $winner;
 
     public function __construct(TicTacToe $ticTacToe)
     {
         $this->board = $ticTacToe->board;
         $this->error = $ticTacToe->error;
+        $this->winner = $ticTacToe->winner;
     }
 }
