@@ -11,13 +11,14 @@ class GameResultResource
     public static $wrap = null;
 
     public $board;
-    public $error;
     public $winner;
 
     public function __construct(TicTacToe $ticTacToe)
     {
         $this->board = $ticTacToe->board;
-        $this->error = $ticTacToe->error;
+        if ($ticTacToe->error != null) {
+            $this->error = $ticTacToe->error;
+        }
         $this->winner = $ticTacToe->winner;
     }
 }

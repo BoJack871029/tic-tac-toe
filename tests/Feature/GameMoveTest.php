@@ -95,4 +95,19 @@ class GameMoveTest extends TestCase
                 ->etc()
         );
     }
+
+    public function test_response_do_not_contains_error_when_request_succeed()
+    {
+        $game = Game::factory()->create();
+        Move::factory()->create(['game_id' => $game->id, 'player' => 2, 'row' => 0, 'col' => 0]);
+      
+        $response = $this->post(route('game-move'), ['token' => $game->token, 'player' => 1, 'row' => 1, 'col' => 2]);
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->missing('error')
+                ->etc()
+        );
+    }
 }
