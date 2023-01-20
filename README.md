@@ -7,15 +7,25 @@
 git clone git@github.com:BoJack871029/tic-tac-toe.git
 ```
 # How to run
+
 ```bash
 cd tic-tac-toe
-./vendor/bin/sail up -d
+
+#Install dependency
+docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/opt -w /opt laravelsail/php81-composer:latest composer install --ignore-platform-reqs
+
+#use example .env file
+cp .env.example .env
+
+#run sail
+./vendor/laravel/sail/bin/sail up -d
+
 ```
 
 # Run tests
 
 ```bash
-./vendor/bin/sail test
+./vendor/laravel/sail/bin/sail test
 ```
 
 
