@@ -3,6 +3,7 @@
 - git
 
 # Clone repo
+
 # How to run
 ```bash
 cd <project_dir>
@@ -67,10 +68,10 @@ Sample response
     - 1: player 1 won
     - 2: player 2 won
 - error: optional. If there was an error, it will return the error message. Possible values:
-    - "Not your turn!";
-    - "Move already taken!";
-    - "This game has already a winner!";
-    - "This game is complete. No other moves available";
+    - Not your turn!
+    - Move already taken!
+    - This game has already a winner!
+    - This game is complete. No other moves available
 
 # How to play
 Here few curl call example:
