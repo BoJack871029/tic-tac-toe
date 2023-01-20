@@ -3,10 +3,12 @@
 - git
 
 # Clone repo
-
+```bash
+git clone git@github.com:BoJack871029/tic-tac-toe.git
+```
 # How to run
 ```bash
-cd <project_dir>
+cd tic-tac-toe
 ./vendor/bin/sail up -d
 ```
 
