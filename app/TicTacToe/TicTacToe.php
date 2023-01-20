@@ -49,6 +49,7 @@ class TicTacToe
     public function move($player, $row, $col)
     {
         if ($this->thereIsWinner()) {
+            $this->winner = $this->getWinner();
             $this->error = Errors::AlreadyWon;
             return false;
         }

@@ -158,6 +158,7 @@ class TicTacToeTest extends TestCase
         $ret = $sut->move(player: 1, row: 0, col: 1);
         $this->assertFalse($ret);
         $this->assertEquals(Errors::AlreadyWon, $sut->error);
+        $this->assertEquals( 1, $sut->winner);
     }
 
     public function test_user_cant_make_a_move_on_complete_game()
@@ -172,7 +173,23 @@ class TicTacToeTest extends TestCase
         $sut->init(gameId: 1);
         $ret = $sut->move(player: 1, row: 0, col: 1);
         $this->assertFalse($ret);
-        $this->assertEquals(Errors::BoardComplete, $sut->error);
+        $this->assertEquals(Errors::BoardComplete, $sut->error);        
     }
+
+    public function test_when_user_try_to_play_a_game_already_won_returns_()
+    {
+        $fakeGame = new Game(['id' => 1]);
+        $this->gameMock->shouldReceive('find')->with(1)->once()->andReturn($fakeGame);
+        $this->moveMock->shouldReceive('setAttribute')->andReturnSelf();
+        $this->moveMock->shouldReceive('save');
+
+        $board = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+        $sut = new TicTacToe($this->gameMock, $this->moveMock, $board, lastPlayer: 2);
+        $sut->init(gameId: 1);
+        $ret = $sut->move(player: 1, row: 0, col: 1);
+        $this->assertFalse($ret);
+        $this->assertEquals(Errors::AlreadyWon, $sut->error);
+    }
+
 
 }
